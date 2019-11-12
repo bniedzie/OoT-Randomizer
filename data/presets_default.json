@@ -6,6 +6,7 @@
     "logic_rules": "glitchless",
     "open_forest": "closed",
     "open_door_of_time": true,
+    "open_kakariko": true,
     "open_fountain": false,
     "gerudo_fortress": "fast",
     "bridge": "medallions",
@@ -76,6 +77,7 @@
     "logic_rules": "glitchless",
     "open_forest": "closed_deku",
     "open_door_of_time": false,
+    "open_kakariko": false,
     "open_fountain": false,
     "gerudo_fortress": "normal",
     "bridge": "tokens",
@@ -245,12 +247,13 @@
     "logic_earliest_adult_trade": "pocket_egg",
     "logic_latest_adult_trade": "pocket_egg"
   },
-  "Standard Weekly (2019-11-04)": {
+  "Standard Weekly (2019-11-04) with Open Kak Gate": {
     "world_count": 1,
     "create_spoiler": true,
     "randomize_settings": false,
     "open_forest": "open",
     "open_door_of_time": true,
+    "open_kakariko": true,
     "open_fountain": false,
     "gerudo_fortress": "fast",
     "bridge": "medallions",
@@ -400,12 +403,13 @@
     "logic_earliest_adult_trade": "prescription",
     "logic_latest_adult_trade": "claim_check"
   },
-  "S3 Tournament": {
+  "S3 Tournament with Open Kak Gate": {
     "world_count": 1,
     "create_spoiler": true,
     "randomize_settings": false,
     "open_forest": "open",
     "open_door_of_time": true,
+    "open_kakariko": true,
     "open_fountain": false,
     "gerudo_fortress": "fast",
     "bridge": "medallions",
