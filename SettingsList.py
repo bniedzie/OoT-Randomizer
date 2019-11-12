@@ -1343,6 +1343,19 @@ setting_infos = [
         },
     ),
     Checkbutton(
+        name           = 'open_kakariko',
+        gui_text       = 'Open Kakariko Gate',
+        gui_tooltip    = '''\
+            The gate in Kakariko Village to Death Mountain Trail	
+            is always open instead of needing Zelda's Letter.	
+            Either way, the gate is always open as an adult.
+        ''',
+        shared         = True,
+        gui_params     = {
+            'randomize_key': 'randomize_settings',
+        },
+    ),
+    Checkbutton(
         name           = 'open_fountain',
         gui_text       = 'Open Zora\'s Fountain',
         gui_tooltip    = '''\
