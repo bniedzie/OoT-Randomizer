@@ -885,7 +885,7 @@
                             (damage_multiplier != 'ohko' or has_fairy or can_use(Nayrus_Love)))))",
             "Kakariko Village Backyard": "is_adult or (is_child and at_day)",
             "Graveyard": "True",
-            "Kakariko Village Behind Gate": "is_adult or 'Kakariko Village Gate Open'"
+            "Kakariko Village Behind Gate": "Zeldas_Letter or is_adult or open_kakariko"
         }
     },
     {
