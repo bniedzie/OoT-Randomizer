@@ -9,7 +9,7 @@ from Rules import set_rules, set_shop_rules
 from Item import Item, ItemFactory, MakeEventItem
 from RuleParser import Rule_AST_Transformer
 from SettingsList import get_setting_info
-from HintList import getRequiredHints
+from HintList import getRequiredHints, hintTable
 import logging
 import copy
 import io
@@ -51,7 +51,7 @@ class World(object):
         # rename a few attributes...
         self.keysanity = self.shuffle_smallkeys in ['keysanity', 'remove']
         self.check_beatable_only = not self.all_reachable
-    
+
         self.shuffle_dungeon_entrances = self.entrance_shuffle != 'off'
         self.shuffle_grotto_entrances = self.entrance_shuffle in ['simple-indoors', 'all-indoors', 'all']
         self.shuffle_interior_entrances = self.entrance_shuffle in ['simple-indoors', 'all-indoors', 'all']
@@ -196,7 +196,7 @@ class World(object):
             raise Exception("JSON parse error around text:\n" + \
                             json_string[error.pos-35:error.pos+35] + "\n" + \
                             "                                   ^^\n")
-            
+
         for region in region_json:
             new_region = Region(region['region_name'])
             new_region.world = self
@@ -488,6 +488,68 @@ class World(object):
     def has_beaten_game(self, state):
         return state.has('Triforce')
 
+    # Meme areas are areas that have joke items in them.  One of these
+    # will be chosen to show on the Lake Hylia water level gossip stone
+    # We exclude locations with a single check to avoid this being
+    # overpowered rather than just a joke.
+    # We track each item with its location so we can include it in the hint.
+    def update_meme_areas(self, spoiler):
+        areas = {}
+        # Link's Pocket and None are not real areas
+        excluded_areas = [None, "Link's Pocket"]
+        for location in self.get_locations():
+            location_hint = get_hint_area(location)
+
+            # Exclude areas with only 1 check
+            if ((location_hint == "outside Ganon's Castle" or location_hint == "Haunted Wasteland") and
+                (self.tokensanity == "off" or self.tokensanity == "dungeons")) or ((location_hint == "Sacred Forest Meadow" or
+                location_hint == "Hyrule Castle") and (self.tokensanity == "off" or self.tokensanity == "dungeons") and
+                self.shuffle_song_items == False):
+                continue
+
+            if location.item is None:
+                continue
+
+            area = location_hint
+
+            # Build the area list and their items
+            if area not in areas:
+                areas[area] = {
+                    'locations': [],
+                }
+            areas[area]['locations'].append(location)
+
+        meme_item_list = [
+            'Ice Arrows',
+            'Piece of Heart (Treasure Chest Game)',
+            'Rupee (1)',
+        ]
+        # Certain items may be meme items in some settings and not others
+        if (self.damage_multiplier != 'ohko' and self.damage_multiplier != 'quadruple' and
+            self.shuffle_scrubs == 'off' and not self.shuffle_grotto_entrances):
+            # nayru's love may be required to prevent forced damage
+            meme_item_list.append('Nayrus Love')
+        if self.hints != 'agony':
+            # Stone of Agony only required if it's used for hints
+            meme_item_list.append('Stone of Agony')
+        if self.damage_multiplier == 'ohko':
+            # Double Defense is a meme in 1HKO
+            meme_item_list.append('Double Defense')
+
+        #Generate the list of meme areas and items
+        self.meme_areas = {}
+
+        for area,area_info in areas.items():
+            for location in area_info['locations']:
+                world_id = location.item.world.id
+                item = location.item
+
+                if (location.item.name in meme_item_list):
+                    if area in self.meme_areas.keys():
+                        self.meme_areas[area].append(area_info)
+                        self.meme_areas[area].append(hintTable[item.name][3])
+                    else:
+                        self.meme_areas[area] = [area_info, hintTable[item.name][3]]
 
     # Useless areas are areas that have contain no items that could ever
     # be used to complete the seed. Unfortunately this is very difficult
@@ -495,7 +557,7 @@ class World(object):
     # set collected to know this. To simplify this we instead just get areas
     # that don't have any items that could ever be required in any seed.
     # We further cull this list with woth info. This is an overestimate of
-    # the true list of possible useless areas, but this will generate a 
+    # the true list of possible useless areas, but this will generate a
     # reasonably sized list of areas that fit this property.
     def update_useless_areas(self, spoiler):
         areas = {}
@@ -545,7 +607,7 @@ class World(object):
             'Ice Arrows',
             'Biggoron Sword',
         ]
-        if (self.damage_multiplier != 'ohko' and self.damage_multiplier != 'quadruple' and 
+        if (self.damage_multiplier != 'ohko' and self.damage_multiplier != 'quadruple' and
             self.shuffle_scrubs == 'off' and not self.shuffle_grotto_entrances):
             # nayru's love may be required to prevent forced damage
             exclude_item_list.append('Nayrus Love')
@@ -592,6 +654,7 @@ class World(object):
 
         for area,area_info in areas.items():
             useless_area = True
+
             for location in area_info['locations']:
                 world_id = location.item.world.id
                 item = location.item

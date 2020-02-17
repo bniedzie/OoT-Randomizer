@@ -70,6 +70,8 @@ gossipLocations = {
     0x040D: GossipStone('Zoras River (Plateau)',                'Zoras River Plateau Gossip Stone'),
     0x040C: GossipStone('Zoras River (Waterfall)',              'Zoras River Waterfall Gossip Stone'),
 
+    0x0422: GossipStone('Lake Hylia Meme Hint',                 'Lake Hylia Water Control Gossip Stone'),
+
     0x0430: GossipStone('Hyrule Field (Castle Moat Grotto)',    'Field West Castle Town Grotto Gossip Stone'),
     0x0432: GossipStone('Hyrule Field (Rock Grotto)',           'Remote Southern Grotto Gossip Stone'),
     0x0433: GossipStone('Hyrule Field (Open Grotto)',           'Field Near Lake Outside Fence Grotto Gossip Stone'),
@@ -137,7 +139,7 @@ def add_hint(spoiler, world, IDs, gossip_text, count, location=None, force_reach
                 else:
                     # If flagged to guarantee reachable, then skip
                     # If no stones are reachable, then this will place nothing
-                    skipped_ids.append(id)                
+                    skipped_ids.append(id)
         else:
             success = False
             break
@@ -218,7 +220,7 @@ def colorText(gossip_text):
                 splitText[0] += splitText[1][:len(prefix)]
                 splitText[1] = splitText[1][len(prefix):]
                 break
-        
+
         splitText[1] = '\x05' + colorMap[color] + splitText[1] + '\x05\x40'
         text = ''.join(splitText)
 
@@ -243,9 +245,9 @@ def get_hint_area(spot):
 
 def get_woth_hint(spoiler, world, checked):
     locations = spoiler.required_locations[world.id]
-    locations = list(filter(lambda location: 
+    locations = list(filter(lambda location:
         location.name not in checked and \
-        not (world.woth_dungeon >= 2 and location.parent_region.dungeon), 
+        not (world.woth_dungeon >= 2 and location.parent_region.dungeon),
         locations))
 
     if not locations:
@@ -263,11 +265,28 @@ def get_woth_hint(spoiler, world, checked):
 
     return (GossipText('#%s# is on the way of the hero.' % location_text, ['Light Blue']), location)
 
+#The meme hint is shown at Lake Hylia
+def get_meme_hint(world):
+    areas = list(world.meme_areas.keys())
+
+    if not areas:
+        return GossipText("once \x05\x41Morpha's Curse\x05\x40\x01" +
+                "is lifted, striking \x05\x42this stone\x05\x40 can\x01" +
+                "shift the tides of \x05\x44Lake Hylia\x05\x40.")
+
+    area_weights = [len(world.meme_areas[area])/2 for area in areas]
+
+    area = random_choices(areas, weights=area_weights)[0]
+
+    return GossipText("once \x05\x41Morpha's Curse\x05\x40\x01" +
+            "is lifted, striking \x05\x42this stone\x05\x40 can\x01" +
+            "shift the tides of \x05\x44Lake Hylia\x05\x40.\x04" +
+            "By the way, plundering #%s# will reward a memer with #%s#." % (area, world.meme_areas[area][1]), ['Pink'])
 
 def get_barren_hint(spoiler, world, checked):
-    areas = list(filter(lambda area: 
+    areas = list(filter(lambda area:
         area not in checked and \
-        not (world.barren_dungeon and world.empty_areas[area]['dungeon']), 
+        not (world.barren_dungeon and world.empty_areas[area]['dungeon']),
         world.empty_areas.keys()))
 
     if not areas:
@@ -339,7 +358,7 @@ def get_specific_hint(spoiler, world, checked, type):
 
     location_text = hint.text
     if '#' not in location_text:
-        location_text = '#%s#' % location_text   
+        location_text = '#%s#' % location_text
     item_text = getHint(getItemGenericName(location.item), world.clearer_hints).text
 
     return (GossipText('%s #%s#.' % (location_text, item_text), ['Green', 'Red']), location)
@@ -415,7 +434,7 @@ hint_func = {
     'woth':     get_woth_hint,
     'barren':   get_barren_hint,
     'item':     get_good_item_hint,
-    'sometimes':get_sometimes_hint,    
+    'sometimes':get_sometimes_hint,
     'song':     get_song_hint,
     'minigame': get_minigame_hint,
     'ow':       get_overworld_hint,
@@ -423,6 +442,7 @@ hint_func = {
     'entrance': get_entrance_hint,
     'random':   get_random_location_hint,
     'junk':     get_junk_hint,
+    'meme':     get_meme_hint,
 }
 
 
@@ -515,7 +535,9 @@ def buildGossipHints(spoiler, world):
 
     checkedLocations = []
 
+    spoiler.hints[world.id][0x0422] = get_meme_hint(world);
     stoneIDs = list(gossipLocations.keys())
+    stoneIDs.remove(0x0422);
 
     world.distribution.configure_gossip(spoiler, stoneIDs)
 
@@ -613,8 +635,8 @@ def buildGossipHints(spoiler, world):
 def buildBossRewardHints(world, messages):
     # text that appears at altar as a child.
     bossRewardsSpiritualStones = [
-        ('Kokiri Emerald',   'Green'), 
-        ('Goron Ruby',       'Red'), 
+        ('Kokiri Emerald',   'Green'),
+        ('Goron Ruby',       'Red'),
         ('Zora Sapphire',    'Blue'),
     ]
     child_text = '\x08'
@@ -704,4 +726,3 @@ def get_raw_text(string):
         else:
             text += char
     return text
-

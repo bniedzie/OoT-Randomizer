@@ -34,6 +34,7 @@ per_world_keys = (
     'locations',
     ':woth_locations',
     ':barren_regions',
+    ':meme_regions',
     'gossip_stones',
 )
 
@@ -224,6 +225,7 @@ class WorldDistribution(object):
             'locations': {name: [LocationRecord(rec) for rec in record] if is_pattern(name) else LocationRecord(record) for (name, record) in src_dict.get('locations', {}).items() if not is_output_only(name)},
             'woth_locations': None,
             'barren_regions': None,
+            'meme_regions': None,
             'gossip_stones': {name: [GossipRecord(rec) for rec in record] if is_pattern(name) else GossipRecord(record) for (name, record) in src_dict.get('gossip_stones', {}).items()},
         }
 
@@ -245,7 +247,7 @@ class WorldDistribution(object):
 
     def to_json(self):
         return {
-            'randomized_settings': self.randomized_settings,      
+            'randomized_settings': self.randomized_settings,
             'starting_items': SortedDict({name: record.to_json() for (name, record) in self.starting_items.items()}),
             'dungeons': {name: record.to_json() for (name, record) in self.dungeons.items()},
             'trials': {name: record.to_json() for (name, record) in self.trials.items()},
@@ -254,6 +256,7 @@ class WorldDistribution(object):
             'locations': {name: [rec.to_json() for rec in record] if is_pattern(name) else record.to_json() for (name, record) in self.locations.items()},
             ':woth_locations': None if self.woth_locations is None else {name: record.to_json() for (name, record) in self.woth_locations.items()},
             ':barren_regions': self.barren_regions,
+            ':meme_regions': self.meme_regions,
             'gossip_stones': SortedDict({name: [rec.to_json() for rec in record] if is_pattern(name) else record.to_json() for (name, record) in self.gossip_stones.items()}),
         }
 
@@ -446,10 +449,10 @@ class WorldDistribution(object):
 
                 target_region = record.region
 
-                matched_targets_to_region = list(filter(lambda target: target.connected_region and target.connected_region.name == target_region, 
+                matched_targets_to_region = list(filter(lambda target: target.connected_region and target.connected_region.name == target_region,
                                                         target_entrance_pools[pool_type]))
                 if not matched_targets_to_region:
-                    raise RuntimeError('No entrance found to replace with %s that leads to %s in world %d' % 
+                    raise RuntimeError('No entrance found to replace with %s that leads to %s in world %d' %
                                                 (matched_entrance, target_region, self.id + 1))
 
                 if matched_entrance.type in ['Overworld', 'OwlDrop']:
@@ -457,14 +460,14 @@ class WorldDistribution(object):
                     try:
                         matched_target = next(filter(lambda target: target.replaces.parent_region.name == target_parent, matched_targets_to_region))
                     except StopIteration:
-                        raise RuntimeError('No entrance found to replace with %s that leads to %s from %s in world %d' % 
+                        raise RuntimeError('No entrance found to replace with %s that leads to %s from %s in world %d' %
                                                 (matched_entrance, target_region, target_parent, self.id + 1))
                 else:
                     matched_target = matched_targets_to_region[0]
                     target_parent = matched_target.parent_region.name
 
                 if matched_target.connected_region == None:
-                    raise RuntimeError('Entrance leading to %s from %s is already shuffled in world %d' % 
+                    raise RuntimeError('Entrance leading to %s from %s is already shuffled in world %d' %
                                             (target_region, target_parent, self.id + 1))
 
                 change_connections(matched_entrance, matched_target)
@@ -472,7 +475,7 @@ class WorldDistribution(object):
                 try:
                     validate_worlds(worlds, None, locations_to_ensure_reachable, itempool)
                 except EntranceShuffleError as error:
-                    raise RuntimeError('Cannot connect %s To %s in world %d (Reason: %s)' % 
+                    raise RuntimeError('Cannot connect %s To %s in world %d (Reason: %s)' %
                                             (matched_entrance, matched_entrance.connected_region, self.id + 1, error))
 
                 confirm_replacement(matched_entrance, matched_target)
@@ -735,6 +738,8 @@ class Distribution(object):
         spoiler.parse_data()
 
         for world in spoiler.worlds:
+            #Don't count the lake hylia hint stone
+            #del spoiler.hints[world.id][1058]
             world_dist = self.world_dists[world.id]
             world_dist.randomized_settings = {randomized_item: getattr(world, randomized_item) for randomized_item in world.randomized_list}
             world_dist.dungeons = {dung: DungeonRecord({ 'mq': world.dungeon_mq[dung] }) for dung in world.dungeon_mq}
@@ -743,6 +748,7 @@ class Distribution(object):
             world_dist.locations = {loc: LocationRecord.from_item(item) for (loc, item) in spoiler.locations[world.id].items()}
             world_dist.woth_locations = {loc.name: LocationRecord.from_item(loc.item) for loc in spoiler.required_locations[world.id]}
             world_dist.barren_regions = [*world.empty_areas]
+            world_dist.meme_regions = [*world.meme_areas]
             world_dist.gossip_stones = {gossipLocations[loc].name: GossipRecord(spoiler.hints[world.id][loc].to_json()) for loc in spoiler.hints[world.id]}
             world_dist.item_pool = {}
 

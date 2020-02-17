@@ -20,7 +20,10 @@ class Hint(object):
 
 
 def getHint(name, clearer_hint=False):
-    textOptions, clearText, type = hintTable[name]
+    if (len(hintTable[name]) == 4):
+        textOptions, clearText, type, memeText = hintTable[name]
+    else:
+        textOptions, clearText, type = hintTable[name]
     if clearer_hint:
         if clearText == None:
             return Hint(name, textOptions, type, 0)
@@ -78,7 +81,7 @@ conditional_always = {
 # # sets color to white (currently only used for dungeon reward hints).
 hintTable = {
     'Magic Meter':                                              (["mystic training", "pixie dust", "a green rectangle"], "a Magic Meter", 'item'),
-    'Double Defense':                                           (["a white outline", "damage decrease", "strengthened love"], "Double Defense", 'item'),
+    'Double Defense':                                           (["a white outline", "damage decrease", "strengthened love"], "Double Defense", 'item', "\x05\x46Implants\x05\x40"),
     'Slingshot':                                                (["a seed shooter", "a rubberband", "a child's catapult"], "a Slingshot", 'item'),
     'Boomerang':                                                (["a banana", "a stun stick"], "the Boomerang", 'item'),
     'Bow':                                                      (["an archery enabler", "a danger dart launcher"], "a Bow", 'item'),
@@ -96,10 +99,10 @@ hintTable = {
     'Hylian Shield':                                            (["a steel safeguard", "Like Like's metal meal"], "a Hylian Shield", 'item'),
     'Mirror Shield':                                            (["the reflective rampart", "Medusa's weakness", "a silvered surface"], "the Mirror Shield", 'item'),
     'Farores Wind':                                             (["teleportation", "a relocation rune", "a green ball", "a green gust"], "Farore's Wind", 'item'),
-    'Nayrus Love':                                              (["a safe space", "an impregnable aura", "a blue barrier", "a blue crystal"], "Nayru's Love", 'item'),
+    'Nayrus Love':                                              (["a safe space", "an impregnable aura", "a blue barrier", "a blue crystal"], "Nayru's Love", 'item', "\x05\x43the ability to Zootr safely\x05\x40"),
     'Dins Fire':                                                (["an inferno", "a heat wave", "a red ball"], "Din's Fire", 'item'),
     'Fire Arrows':                                              (["the furnace firearm", "the burning bolts", "a magma missile"], "the Fire Arrows", 'item'),
-    'Ice Arrows':                                               (["the refrigerator rocket", "the frostbite bolts", "an iceberg maker"], "the Ice Arrows", 'item'),
+    'Ice Arrows':                                               (["the refrigerator rocket", "the frostbite bolts", "an iceberg maker"], "the Ice Arrows", 'item', "\x05\x44Bongo being in logic\x05\x40"),
     'Light Arrows':                                             (["the shining shot", "the luminous launcher", "Ganondorf's bane", "the lighting bolts"], "the Light Arrows", 'item'),
     'Lens of Truth':                                            (["a lie detector", "a ghost tracker", "true sight", "a detective's tool"], "the Lens of Truth", 'item'),
     'Ocarina':                                                  (["a flute", "a music maker"], "an Ocarina", 'item'),
@@ -130,18 +133,18 @@ hintTable = {
     'Bottle with Bugs':                                         (["an insectarium", "Skulltula finders"], "a Bug Bottle", 'item'),
     'Bottle with Poe':                                          (["a spooky ghost", "a face in the jar"], "a Poe Bottle", 'item'),
     'Bottle with Big Poe':                                      (["the spookiest ghost", "a sidequest spirit"], "a Big Poe Bottle", 'item'),
-    'Stone of Agony':                                           (["the shake stone", "the Rumble Pak (TM)"], "the Stone of Agony", 'item'),
+    'Stone of Agony':                                           (["the shake stone", "the Rumble Pak (TM)"], "the Stone of Agony", 'item', "\x05\x45the paperweight\x05\x40"),
     'Gerudo Membership Card':                                   (["a girl club membership", "a desert tribe's pass"], "the Gerudo Card", 'item'),
     'Progressive Wallet':                                       (["a mo' money holder", "a gem purse", "a portable bank"], "a Wallet", 'item'),
     'Deku Stick Capacity':                                      (["a lumber rack", "more flammable twigs"], "Deku Stick Capacity", 'item'),
     'Deku Nut Capacity':                                        (["more nuts", "flashbang storage"], "Deku Nut Capacity", 'item'),
     'Heart Container':                                          (["a lot of love", "a Valentine's gift", "a boss's organ"], "a Heart Container", 'item'),
     'Piece of Heart':                                           (["a little love", "a broken heart"], "a Piece of Heart", 'item'),
-    'Piece of Heart (Treasure Chest Game)':                     ("a victory valentine", "a Piece of Heart", 'item'),
+    'Piece of Heart (Treasure Chest Game)':                     (["a victory valentine"], "a Piece of Heart", 'item', "\x05\x41an excuse to .done early <3\x05\x40"),
     'Recovery Heart':                                           (["a free heal", "a hearty meal", "a Band-Aid"], "a Recovery Heart", 'item'),
     'Rupee (Treasure Chest Game)':                              ("the dollar of defeat", 'a Green Rupee', 'item'),
     'Deku Stick (1)':                                           ("a breakable branch", 'a Deku Stick', 'item'),
-    'Rupee (1)':                                                (["a unique coin", "a penny", "a green gem"], "a Green Rupee", 'item'),
+    'Rupee (1)':                                                (["a unique coin", "a penny", "a green gem"], "a Green Rupee", 'item', "\x05\x42Greg, the Green Rupee of Eternal Glory\x05\x40"),
     'Rupees (5)':                                               (["a common coin", "a blue gem"], "a Blue Rupee", 'item'),
     'Rupees (20)':                                              (["couch cash", "a red gem"], "a Red Rupee", 'item'),
     'Rupees (50)':                                              (["big bucks", "a purple gem", "wealth"], "a Purple Rupee", 'item'),
@@ -423,7 +426,7 @@ hintTable = {
     'Bottom of the Well':                                       ("a shadow\'s prison", "Bottom of the Well", 'dungeonName'),
     'Gerudo Training Grounds':                                  ("the test of thieves", "Gerudo Training Grounds", 'dungeonName'),
     'Ganons Castle':                                            ("a conquered citadel", "Ganon's Castle", 'dungeonName'),
-    
+
     'Queen Gohma':                                              ("One inside an #ancient tree#...^", "One in the #Deku Tree#...^", 'boss'),
     'King Dodongo':                                             ("One within an #immense cavern#...^", "One in #Dodongo's Cavern#...^", 'boss'),
     'Barinade':                                                 ("One in the #belly of a deity#...^", "One in #Jabu Jabu's Belly#...^", 'boss'),
@@ -437,7 +440,7 @@ hintTable = {
     'Spiritual Stone Text End':                                 ("\x13\x08Stand with the Ocarina of Time&and play the Song of Time.", None, 'boss'),
     'Medallion Text Start':                                     ("When evil rules all, an awakening&voice from the Sacred Realm will&call those destined to be Sages,&who dwell in the \x05\x41five temples\x05\x40.^", None, 'boss'),
     'Medallion Text End':                                       ("\x13\x12Together with the Hero of Time,&the awakened ones will bind&the evil and return the light&of peace to the world.", None, 'boss'),
-    
+
     'Validation Line':                                          ("Hmph... Since you made it this far,&I'll let you know what glorious&prize of Ganon's you likely&missed out on in my tower.^Behold...^", None, 'validation line'),
     'Light Arrow Location':                                     ("Ha ha ha... You'll never beat me by&reflecting my lightning bolts&and unleashing the arrows from&", None, 'Light Arrow Location'),
     '2001':                                                     ("Oh! It's @.&I was expecting someone called&Sheik. Do you know what&happened to them?", None, 'ganonLine'),
@@ -472,7 +475,7 @@ def hintExclusions(world, clear_cache=False):
     location_hints = []
     for name in hintTable:
         hint = getHint(name, world.clearer_hints)
-        if any(item in hint.type for item in 
+        if any(item in hint.type for item in
                 ['always',
                  'sometimes',
                  'minigame',

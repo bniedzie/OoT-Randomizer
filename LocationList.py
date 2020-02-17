@@ -774,6 +774,7 @@ location_table = {
     "Lake Hylia Lab Gossip Stone":                     ("GossipStone", None,  None, None,                     None),
     "Lake Hylia Gossip Stone (Southeast)":             ("GossipStone", None,  None, None,                     None),
     "Lake Hylia Gossip Stone (Southwest)":             ("GossipStone", None,  None, None,                     None),
+    "Lake Hylia Water Control Gossip Stone":           ("GossipStone", None,  None, None,                     None),
     "Lost Woods Gossip Stone":                         ("GossipStone", None,  None, None,                     None),
     "Sacred Forest Meadow Maze Gossip Stone (Lower)":  ("GossipStone", None,  None, None,                     None),
     "Sacred Forest Meadow Maze Gossip Stone (Upper)":  ("GossipStone", None,  None, None,                     None),

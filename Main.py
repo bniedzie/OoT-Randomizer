@@ -153,6 +153,7 @@ def generate(settings, window):
         State.update_required_items(spoiler)
         for world in worlds:
             world.update_useless_areas(spoiler)
+            world.update_meme_areas(spoiler)
             buildGossipHints(spoiler, world)
         window.update_progress(55)
     spoiler.build_file_hash()
@@ -520,7 +521,7 @@ def create_playthrough(spoiler):
     collection_spheres = []
     entrance_spheres = []
     remaining_entrances = set(entrance for world in worlds for entrance in world.get_shuffled_entrances())
-    
+
     while True:
         playthrough.checkpoint()
         # Not collecting while the generator runs means we only get one sphere at a time

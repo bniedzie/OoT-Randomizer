@@ -132,7 +132,6 @@ class Item(object):
     def dungeonitem(self):
         return self.smallkey or self.bosskey or self.map or self.compass
 
-
     @property
     def majoritem(self):
         if self.type == 'Token':
